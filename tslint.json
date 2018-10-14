@@ -11,8 +11,6 @@
   "rules": {
     "quotemark": [true, "single"],
     "indent": [true, "spaces", 4],
-    "indent-size": [true, 4],
-    "ter-indent": [true, 4],
     "no-console": 0,
     "interface-name": false,
     "ordered-imports": false,
