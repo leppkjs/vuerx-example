@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 const Home = () => import(/* webpackChunkName: "home" */ './views/Home.vue');
-const About = () => import(/* webpackChunkName: "about" */ './views/About.vue');
+const SubjectExample = () => import(/* webpackChunkName: "subject-example" */ './views/SubjectExample.vue');
+const AutoComplete = () => import(/* webpackChunkName: "auto-complete" */ './views/AutoComplete.vue');
 Vue.use(Router);
 export default new Router({
     mode: 'history',
@@ -13,12 +14,17 @@ export default new Router({
             component: Home,
         },
         {
-            path: '/about',
-            name: 'about',
+            path: '/subject-example',
+            name: 'SubjectExample',
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
-            component: About,
+            component: SubjectExample,
+        },
+        {
+            path: '/auto-complete',
+            name: 'autoComplete',
+            component: AutoComplete,
         },
     ],
 });
