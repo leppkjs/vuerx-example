@@ -3,7 +3,10 @@ import Router from 'vue-router';
 const Home = () => import(/* webpackChunkName: "home" */ './views/Home.vue');
 const SubjectExample = () => import(/* webpackChunkName: "subject-example" */ './views/SubjectExample.vue');
 const AutoComplete = () => import(/* webpackChunkName: "auto-complete" */ './views/AutoComplete.vue');
+const Carousel = () => import(/* webpackChunkName: "auto-complete" */ './views/Carousel.vue');
+
 Vue.use(Router);
+
 export default new Router({
     mode: 'history',
     base: process.env.BASE_URL,
@@ -25,6 +28,11 @@ export default new Router({
             path: '/auto-complete',
             name: 'autoComplete',
             component: AutoComplete,
+        },
+        {
+            path: '/carousel',
+            name: 'carousel',
+            component: Carousel,
         },
     ],
 });

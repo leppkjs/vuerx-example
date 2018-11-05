@@ -6,6 +6,8 @@
             <router-link to="/subject-example">SubjectExample</router-link>
             |
             <router-link to="/auto-complete">AutoComplete</router-link>
+            |
+            <router-link to="/carousel">Carousel</router-link>
         </div>
         <router-view/>
     </div>

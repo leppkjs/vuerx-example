@@ -5,8 +5,8 @@
             <input id="search" type="text" placeholder="검색하고 싶은 사용자 아이디를 입력해주세요.">
             <ul id="suggestLayer">
                 <li class="user" v-for="user in users">
-                    <img v-bind:src="{{user.avatar_url}}" width="54px" height="50px" />
-                    <p><a v-bind:href="{{user.html_url}}" target="_blank">{{user.login}}</a></p>
+                    <img v-bind:src="{user.avatar_url}" width="54px" height="50px" />
+                    <p><a v-bind:href="{user.html_url}" target="_blank">{user.login}</a></p>
                 </li>
             </ul>
             <div id="loading">
@@ -24,13 +24,13 @@ import {ajax} from 'rxjs/ajax';
 
 @Component
 export default class AutoComplete extends Vue {
+
+    public users: object[] = [];
     private $layer = document.getElementById('suggestLayer');
 
     private $loading = document.getElementById('loading');
 
     private keyup$: Observable<any> = null;
-
-    public users: Array<object> = [];
 
     constructor() {
         super();
@@ -62,9 +62,9 @@ export default class AutoComplete extends Vue {
                 switchMap((query: any) => ajax.getJSON(`https://api.github.com/search/users?q=${query}`)),
                 pluck('items'),
                 tap(this.hideLoading),
-                tap((v: Array<object>)=> console.log('user$...')),
+                tap((v: object[]) => console.log('user$...')),
                 retry(2),
-                finalize(this.hideLoading)
+                finalize(this.hideLoading),
             );
 
         user$.subscribe(
@@ -72,12 +72,12 @@ export default class AutoComplete extends Vue {
             (e: any) => {
                 console.error(e);
                 alert(e);
-            }
+            },
         );
 
         reset$.pipe(
             tap((v: any) => console.log('reset$')),
-            tap((v: any) => this.$layer.innerHTML = '')
+            tap((v: any) => this.$layer.innerHTML = ''),
         ).subscribe();
 
     }
