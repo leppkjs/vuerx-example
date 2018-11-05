@@ -44,7 +44,7 @@ export default class Carousel extends Vue {
 
         const size$ = fromEvent(window, 'resize').pipe(
             startWith(0),
-            map((dumy: number | Event) => this.$view.clientWidth)
+            map((dumy: number | Event) => this.$view.clientWidth),
         );
 
         // size$.subscribe((width: number) => console.log('view의 넓이', width));
@@ -53,10 +53,10 @@ export default class Carousel extends Vue {
             switchMap((start: number) => {
                 return move$.pipe(
                     map((move: number) => move - start),
-                    takeUntil(end$)
+                    takeUntil(end$),
                 );
             }),
-            share()
+            share(),
         );
 
         // drag$.subscribe((distance: number) => console.log('start$의 move$의 차이값', distance));
@@ -64,21 +64,21 @@ export default class Carousel extends Vue {
         const drop$ = drag$.pipe(
             switchMap((drag) => {
                 return end$.pipe(
-                    map(event => drag),
-                    first()
-                )
+                    map((event) => drag),
+                    first(),
+                );
             }),
-            withLatestFrom(size$)
+            withLatestFrom(size$),
         );
 
         const carousel$ = merge(drag$, drop$);
 
-        carousel$.subscribe((v : number | Array<number>) => console.log('캐러셀 데이터', v));
+        carousel$.subscribe((v: number | number[]) => console.log('캐러셀 데이터', v));
     }
 
     private toPos(obs$: Observable<any>) {
         return obs$.pipe(
-            map((v: any) => this.SUPPORT_TOUCH ? v.changedTouches[0].pageX : v.pageX)
+            map((v: any) => this.SUPPORT_TOUCH ? v.changedTouches[0].pageX : v.pageX),
         );
     }
 
