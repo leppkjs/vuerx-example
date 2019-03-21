@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-const Home = () => import(/* webpackChunkName: "home" */ './views/Home.vue');
-const About = () => import(/* webpackChunkName: "about" */ './views/About.vue');
-const List = () => import(/* webpackChunkName: "list" */ './views/List.vue');
+var Home = function () { return import(/* webpackChunkName: "home" */ './views/Home.vue'); };
+// const About = () => import(/* webpackChunkName: "about" */ './views/About.vue');
+var About = function () { return import(/* webpackChunkName: "about" */ './views/SubjectExample.vue'); };
+var List = function () { return import(/* webpackChunkName: "list" */ './views/List.vue'); };
 Vue.use(Router);
 export default new Router({
     mode: 'history',

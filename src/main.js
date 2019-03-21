@@ -8,7 +8,7 @@ Vue.config.productionTip = false;
 Vue.use(VueRx, Rx);
 Vue.use(VueScrollTo);
 new Vue({
-    router,
-    render: (h) => h(App),
+    router: router,
+    render: function (h) { return h(App); },
 }).$mount('#app');
 //# sourceMappingURL=main.js.map
