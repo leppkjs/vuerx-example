@@ -5,7 +5,7 @@
             <input id="search" type="text" placeholder="검색하고 싶은 사용자 아이디를 입력해주세요.">
             <ul id="suggestLayer">
                 <li class="user" v-for="user in users">
-                    <img v-bind:src="{user.avatar_url}" width="54px" height="50px" />
+                    <img v-bind:src="{user.avatar_url}" width="54px" height="50px"/>
                     <p><a v-bind:href="{user.html_url}" target="_blank">{user.login}</a></p>
                 </li>
             </ul>
@@ -17,81 +17,91 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import {fromEvent, Observable} from 'rxjs';
-import {debounceTime, distinctUntilChanged, finalize, map, partition, pluck, retry, switchMap, tap} from 'rxjs/operators';
-import {ajax} from 'rxjs/ajax';
+    import {fromEvent, Observable} from 'rxjs';
+    import {ajax} from 'rxjs/ajax';
+    import {
+        debounceTime,
+        distinctUntilChanged,
+        finalize,
+        map,
+        partition,
+        pluck,
+        retry,
+        switchMap,
+        tap,
+    } from 'rxjs/operators';
+    import {Component, Vue} from 'vue-property-decorator';
 
-@Component
-export default class AutoComplete extends Vue {
+    @Component
+    export default class AutoComplete extends Vue {
 
-    public users: object[] = [];
-    private $layer = document.getElementById('suggestLayer');
+        public users: object[] = [];
+        private $layer = document.getElementById('suggestLayer');
 
-    private $loading = document.getElementById('loading');
+        private $loading = document.getElementById('loading');
 
-    private keyup$: Observable<any> = null;
+        private keyup$: Observable<any> = null;
 
-    constructor() {
-        super();
-    }
+        constructor() {
+            super();
+        }
 
-    private created() {
-        console.info('created...');
-    }
+        private created() {
+            console.info('created...');
+        }
 
-    private mounted() {
-        console.info('mounted...');
-        this.$layer = document.getElementById('suggestLayer');
+        private mounted() {
+            console.info('mounted...');
+            this.$layer = document.getElementById('suggestLayer');
 
-        this.$loading = document.getElementById('loading');
+            this.$loading = document.getElementById('loading');
 
-        this.keyup$ = fromEvent(document.getElementById('search'), 'keyup')
-            .pipe(
-                debounceTime(300),
-                map((event: any): string => event.target.value as string),
-                distinctUntilChanged(),
+            this.keyup$ = fromEvent(document.getElementById('search'), 'keyup')
+                .pipe(
+                    debounceTime(300),
+                    map((event: any): string => event.target.value as string),
+                    distinctUntilChanged(),
+                );
+
+
+            let [user$, reset$]: Observable<any> = partition((query: any) => query.trim().length > 0)(this.keyup$);
+
+            user$ = user$
+                .pipe(
+                    tap(this.showLoading),
+                    switchMap((query: any) => ajax.getJSON(`https://api.github.com/search/users?q=${query}`)),
+                    pluck('items'),
+                    tap(this.hideLoading),
+                    tap((v: object[]) => console.log('user$...')),
+                    retry(2),
+                    finalize(this.hideLoading),
+                );
+
+            user$.subscribe(
+                (v: any) => this.users = v,
+                (e: any) => {
+                    console.error(e);
+                    alert(e);
+                },
             );
 
+            reset$.pipe(
+                tap((v: any) => console.log('reset$')),
+                tap((v: any) => this.$layer.innerHTML = ''),
+            ).subscribe();
 
-        let [user$, reset$]: Observable<any> = partition((query: any) => query.trim().length > 0)(this.keyup$);
+        }
 
-        user$ = user$
-            .pipe(
-                tap(this.showLoading),
-                switchMap((query: any) => ajax.getJSON(`https://api.github.com/search/users?q=${query}`)),
-                pluck('items'),
-                tap(this.hideLoading),
-                tap((v: object[]) => console.log('user$...')),
-                retry(2),
-                finalize(this.hideLoading),
-            );
+        private showLoading() {
+            this.$loading.style.display = 'block';
+        }
 
-        user$.subscribe(
-            (v: any) => this.users = v,
-            (e: any) => {
-                console.error(e);
-                alert(e);
-            },
-        );
+        private hideLoading() {
+            this.$loading.style.display = 'none';
+        }
 
-        reset$.pipe(
-            tap((v: any) => console.log('reset$')),
-            tap((v: any) => this.$layer.innerHTML = ''),
-        ).subscribe();
 
     }
-
-    private showLoading() {
-        this.$loading.style.display = 'block';
-    }
-
-    private hideLoading() {
-        this.$loading.style.display = 'none';
-    }
-
-
-}
 </script>
 
 <style scoped>
